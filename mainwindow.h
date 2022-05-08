@@ -16,8 +16,14 @@ public:
     explicit MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+
+
 private slots:
+    void onPlayerInitFinished(VideoPlayer *player);
+
     void onPlayerStateChanged(VideoPlayer *player);
+
+    void onPlayerErrorOccurred(VideoPlayer *player);
 
     void on_openFileBtn_clicked();
 
@@ -25,9 +31,13 @@ private slots:
 
     void on_startBtn_clicked();
 
+    void on_videoProcessSlider_valueChanged(int value);
+
 private:
     Ui::MainWindow *ui;
     VideoPlayer *_player;
+
+    QString getTimeText(int value);
 };
 
 #endif // MAINWINDOW_H

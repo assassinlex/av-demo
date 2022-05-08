@@ -34,9 +34,12 @@ public:
     State getState();
     void setFilename(QString &filename);
     const char * getFilename();
+    int64_t getDuration();
 
 signals:
     void stateChanged(VideoPlayer *player);
+    void initFinished(VideoPlayer *player);
+    void playFailed(VideoPlayer *player);
 
 public slots:
 

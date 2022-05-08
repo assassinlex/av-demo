@@ -17,6 +17,8 @@ extern "C" {
     if (ret < 0) { \
         ERROR_BUF; \
         qDebug() << #func << "errno:" << ret << "error:" << errbuf; \
+        setState(Stopped); \
+        emit playFailed(this); \
         goto end; \
     }
 
@@ -73,6 +75,11 @@ VideoPlayer::State VideoPlayer::getState()
     return _state;
 }
 
+int64_t VideoPlayer::getDuration()
+{
+    return (_fmtCtx ? _fmtCtx->duration : 0) / 1000000;
+}
+
 void VideoPlayer::setFilename(QString &filename)
 {
     QByteArray name = filename.toLocal8Bit();
@@ -100,6 +107,7 @@ void VideoPlayer::readFile()
 
     // 创建解封装上下文、打开文件
     ret = avformat_open_input(&_fmtCtx, _filename, nullptr, nullptr);
+//    ret = -1;
     END(avformat_open_input);
 
     // 检索流信息
@@ -115,6 +123,9 @@ void VideoPlayer::readFile()
 
     // 初始化视频信息
     if (initVideoInfo() < 0) goto end;
+
+    // 发射初始化完成信号
+    emit initFinished(this);
 
     // 从输入文件中读取数据
     AVPacket pkt;
